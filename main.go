@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 
@@ -16,22 +15,5 @@ func main(){
 		log.Fatalf("failed opening file: %s", err)
 	}
 
-	accountsRaw := ocr.ConvertTextToSlice(inputData)
-	accountByLines := ocr.ParseAccounts(accountsRaw)
-	accountNumbers := make([][]string, 0, len(accountByLines))
-
-	for _, accountRaw := range accountByLines {
-		accountNumber := ocr.ConvertToNumbers(accountRaw)
-		accountNumbers = append(accountNumbers, accountNumber)
-	}
-
-	for _, account := range accountNumbers {
-		checkSum, err := ocr.CheckSum(account)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-
-		fmt.Println(checkSum)
-	}
+	ocr.Recognize(inputData)
 }

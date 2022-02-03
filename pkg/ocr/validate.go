@@ -13,7 +13,7 @@ func CheckSum(accountNumbers []string) (int, error){
 	for i := 0; i < 9; i++ {
 		accountNumber, err := strconv.Atoi(accountNumbers[i])
 		if err != nil {
-			errorMsg := "It is not possible to convert " + accountNumbers[i]
+			errorMsg := "it is not possible to convert " + accountNumbers[i]
 			log.Println(errorMsg)
 			return 0, fmt.Errorf(errorMsg)
 		}
