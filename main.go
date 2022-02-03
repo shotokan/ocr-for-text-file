@@ -25,8 +25,19 @@ func main(){
 	accountsRaw := ocr.ReadText(inputData)
 	ocr.TrainOCR(corpus)
 	accountByLines := ocr.ParseAccounts(accountsRaw)
+	accountNumbers := make([][]string, 0, len(accountByLines))
 	for _, accountRaw := range accountByLines {
-		fmt.Println(ocr.ParseNumbers(accountRaw))
+		accountNumber := ocr.ParseNumbers(accountRaw)
+		accountNumbers = append(accountNumbers, accountNumber)
+	}
 
+	for _, account := range accountNumbers {
+		checkSum, err := ocr.CheckSum(account)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		fmt.Println(checkSum)
 	}
 }
