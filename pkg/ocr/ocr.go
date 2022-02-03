@@ -1,12 +1,11 @@
 package ocr
 
 import (
-	"fmt"
 	"io"
 	"strings"
 )
 
-func Recognize(inputData io.Reader) {
+func Recognize(inputData io.Reader) map[string]string{
 	accountsRaw := ConvertTextToSlice(inputData)
 	accountByLines := ParseAccounts(accountsRaw)
 	accountNumbers := make([][]string, 0, len(accountByLines))
@@ -16,9 +15,11 @@ func Recognize(inputData io.Reader) {
 		accountNumbers = append(accountNumbers, accountNumber)
 	}
 
+	accountsValidated := make(map[string]string)
+
 	for _, account := range accountNumbers {
 	  msg := CheckSum(account)
-
-		fmt.Println(strings.Join(account, ""), msg)
+		accountsValidated[strings.Join(account, "")] = msg
 	}
+	return accountsValidated
 }
