@@ -3,7 +3,14 @@ package ocr
 import (
 	"fmt"
 	"log"
+	"strconv"
 )
+
+var Patterns map[int][3]string
+
+func init() {
+	Patterns = make(map[int][3]string)
+}
 
 // Split and transform lines of text in accounts form by 3 lines
 // Each account is formed by 9 numbers and each number number is
@@ -18,36 +25,44 @@ func ParseAccounts(rawAccounts []string) [][]string{
 			accountByLines = []string{}
 			continue
 		}
-		log.Println(textLine)
 		accountByLines = append(accountByLines, textLine)
 		
 	}
 	return accounts
 }
 
-func ParseNumbers(account []string) []int{
+func ParseNumbers(account []string) []string{
+	var numbersFound []string
+
 	for i := 0; i < 27; i = i + 3 {
-		fmt.Println(i)
 		line1 := account[0]
 		line2 := account[1]
 		line3 := account[2]
-		fmt.Println(line1[i: i+3])
-		fmt.Println(line2[i: i+3])
-		fmt.Println(line3[i: i+3])
+		number, err := findNumber(line1[i: i+3], line2[i: i+3], line3[i: i+3])
+		if err != nil {
+			log.Println(err)
+			numbersFound = append(numbersFound, "?")
+			continue
+		}
+		numbersFound = append(numbersFound, strconv.FormatInt(int64(number), 10))
 	}
-	return []int{1, 2}
+	return numbersFound
 }
 
-// func findNumber(patterns map[int][3]string, line1, line2, line3 string) int {
-// 	for number, numberPatterns := range patterns {
-
-// 	}
-// }
+func findNumber(line1, line2, line3 string) (int, error) {
+	for number, numberPatterns := range Patterns {
+		if numberPatterns[0] == line1 && numberPatterns[1] == line2 && numberPatterns[2] == line3 {
+			return number, nil
+		}
+	}
+	return 0, fmt.Errorf("Number not found")
+}
 
 func TrainOCR(numbers []string) map[int][3]string {
-	numberPatterns := make(map[int][3]string)
 	for i, line := range ParseAccounts(numbers){
-		numberPatterns[i] = [3]string{line[0], line[1], line[2]}
+		Patterns[i] = [3]string{line[0], line[1], line[2]}
 	}
-	return numberPatterns
+	return Patterns
 }
+
+func CheckSum(){}

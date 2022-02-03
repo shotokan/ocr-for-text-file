@@ -15,7 +15,18 @@ func main(){
 		log.Fatalf("failed opening file: %s", err)
 	}
 
-	x := ocr.ReadText(file)
+	inputData, err := os.Open("entradas.txt")
+ 
+	if err != nil {
+		log.Fatalf("failed opening file: %s", err)
+	}
 
-	fmt.Println(ocr.TrainOCR(x))
+	corpus := ocr.ReadText(file)
+	accountsRaw := ocr.ReadText(inputData)
+	ocr.TrainOCR(corpus)
+	accountByLines := ocr.ParseAccounts(accountsRaw)
+	for _, accountRaw := range accountByLines {
+		fmt.Println(ocr.ParseNumbers(accountRaw))
+
+	}
 }
