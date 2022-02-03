@@ -3,14 +3,15 @@ package handler
 import (
 	"fmt"
 	"log"
+	"mime/multipart"
 	"net/http"
 
 	"github.com/labstack/echo"
-	"github.com/shotokan/ocr-for-text-file/pkg/ocr"
+	"github.com/shotokan/ocr-for-text-file/internal/account/dto"
 )
 
 type AccountValidator interface {
-	ValidateText() error
+	ValidateTextFromFile(file multipart.File) ([]dto.Account, error)
 }
 
 type ValidateAccountsHandler struct {
@@ -33,9 +34,16 @@ func (va ValidateAccountsHandler) ValidateAccountsTextHandler() echo.HandlerFunc
 		if err != nil {
 			return err
 		}
+
 		defer src.Close()
-		
-		accountsValidated := ocr.Recognize(src)
+
+		accountsValidated, err := va.AccountValidator.ValidateTextFromFile(src)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, struct{
+				message string
+			}{message: err.Error()})
+		}
+
 		return c.JSON(http.StatusOK, accountsValidated)
 	}
 	
