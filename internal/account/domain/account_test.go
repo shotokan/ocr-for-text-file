@@ -49,3 +49,26 @@ func TestAccountFail(t *testing.T) {
 		})
 	}
 }
+
+func TestValidateAccountNumber(t *testing.T) {
+	accountID := uuid.NewString()
+	tests := []struct{
+		name string
+		input []string
+		output string
+	}{
+		{name: "valid number", input: []string{accountID, "000000051"},  output: "OK"},
+		{name: "invalid number", input: []string{accountID, "000000001"},  output: "ERR"},
+		{name: "illegible number", input: []string{accountID, "00000000?"},  output: "ILL"},
+
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := NewAccount(tt.input[0], tt.input[1])
+			got.Validate()
+			assert.Nil(t, err, tt.name)
+			assert.Equal(t, tt.output, got.CheckSum(), tt.name)
+		})
+	}
+}
