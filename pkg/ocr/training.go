@@ -4,9 +4,12 @@ import (
 	"io"
 	"log"
 	"os"
+	"path"
+	"path/filepath"
+	"runtime"
 )
 var CLASSIFIED_NUMBERS map[int][3]string
-var TRAINING_TEXT_PATH string = "./training_text.txt"
+var TRAINING_TEXT_PATH string = "training_text.txt"
 
 func init() {
 	CLASSIFIED_NUMBERS = make(map[int][3]string)
@@ -27,7 +30,9 @@ func trainOCR(numbers []string) {
 }
 
 func readTrainingText() io.Reader {
-	file, err := os.Open(TRAINING_TEXT_PATH)
+	_, b, _, _ := runtime.Caller(0)
+	filePath   := path.Join(filepath.Dir(b), TRAINING_TEXT_PATH)
+	file, err := os.Open(filePath)
 	if err != nil {
 		log.Fatalf("failed opening file: %s", err)
 	}
