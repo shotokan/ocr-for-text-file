@@ -6,21 +6,20 @@ import (
 	"strconv"
 )
 
-var Patterns map[int][3]string
 
-func init() {
-	Patterns = make(map[int][3]string)
-}
+var MAX_LINES_PER_ACOUNT = 3
 
 // Split and transform lines of text in accounts form by 3 lines
-// Each account is formed by 9 numbers and each number number is
+// Each account is formed by 9 numbers and each number is a 3x3 characters
 func ParseAccounts(rawAccounts []string) [][]string{
-	var accountByLines []string = make([]string, 0, 3)
-	accounts := make([][]string, 0, (len(rawAccounts)/4) + 1)
+	var accountByLines []string = make([]string, 0, MAX_LINES_PER_ACOUNT)
+	numberAccounts := (len(rawAccounts)/4) + 1
+	
+	accounts := make([][]string, 0, numberAccounts)
 
 	for _, textLine := range rawAccounts {
 	
-		if len(accountByLines) == 3 {
+		if len(accountByLines) == MAX_LINES_PER_ACOUNT {
 			accounts = append(accounts, accountByLines)
 			accountByLines = []string{}
 			continue
@@ -31,7 +30,8 @@ func ParseAccounts(rawAccounts []string) [][]string{
 	return accounts
 }
 
-func ParseNumbers(account []string) []string{
+// Converts 3x3 characters of the account to numbers
+func ConvertToNumbers(account []string) []string {
 	var numbersFound []string
 
 	for i := 0; i < 27; i = i + 3 {
@@ -50,7 +50,7 @@ func ParseNumbers(account []string) []string{
 }
 
 func findNumber(line1, line2, line3 string) (int, error) {
-	for number, numberPatterns := range Patterns {
+	for number, numberPatterns := range CLASSIFIED_NUMBERS {
 		if numberPatterns[0] == line1 && numberPatterns[1] == line2 && numberPatterns[2] == line3 {
 			return number, nil
 		}
@@ -58,12 +58,7 @@ func findNumber(line1, line2, line3 string) (int, error) {
 	return 0, fmt.Errorf("Number not found")
 }
 
-func TrainOCR(numbers []string) map[int][3]string {
-	for i, line := range ParseAccounts(numbers){
-		Patterns[i] = [3]string{line[0], line[1], line[2]}
-	}
-	return Patterns
-}
+
 
 func CheckSum(accountNumbers []string) (int, error){
 	log.Println(accountNumbers)

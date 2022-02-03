@@ -5,8 +5,8 @@ import (
 	"io"
 )
 
-// Parse a text to a slice of strings
-func ReadText(file io.Reader) []string {
+// Convert it into a slice of strings
+func ConvertTextToSlice(file io.Reader) []string {
 	scanner := bufio.NewScanner(file)
 	var txtlines []string
 	for scanner.Scan() {
