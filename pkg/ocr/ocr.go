@@ -3,7 +3,7 @@ package ocr
 import (
 	"fmt"
 	"io"
-	"log"
+	"strings"
 )
 
 func Recognize(inputData io.Reader) {
@@ -17,12 +17,8 @@ func Recognize(inputData io.Reader) {
 	}
 
 	for _, account := range accountNumbers {
-		checkSum, err := CheckSum(account)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
+	  msg := CheckSum(account)
 
-		fmt.Println(checkSum)
+		fmt.Println(strings.Join(account, ""), msg)
 	}
 }

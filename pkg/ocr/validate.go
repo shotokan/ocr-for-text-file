@@ -1,12 +1,21 @@
 package ocr
 
 import (
-	"fmt"
 	"log"
 	"strconv"
 )
 
-func CheckSum(accountNumbers []string) (int, error){
+const (
+	OK_ACCOUNT = "OK"
+	INVALID_ACCOUNT = "ERR"
+	ILLEGIBLE_ACCOUNT = "ILL"
+)
+
+// Validate the account
+// when 0 it is a valid account
+// when different to 0 is not a valid account
+// when a ? character is found the account is illigal
+func CheckSum(accountNumbers []string) string{
 	log.Println(accountNumbers)
 	checkSum := 0
 	delta := 9
@@ -15,12 +24,16 @@ func CheckSum(accountNumbers []string) (int, error){
 		if err != nil {
 			errorMsg := "it is not possible to convert " + accountNumbers[i]
 			log.Println(errorMsg)
-			return 0, fmt.Errorf(errorMsg)
+			return ILLEGIBLE_ACCOUNT
 		}
 		checkSum += accountNumber * delta
 		delta--
 	}
 
 	checkSum = checkSum % 11
-	return checkSum, nil
+	if checkSum != 0 {
+		return INVALID_ACCOUNT
+	}
+	
+	return OK_ACCOUNT
 }
