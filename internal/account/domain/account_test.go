@@ -18,7 +18,6 @@ func TestAccountSuccess(t *testing.T) {
 	}{
 		{name: "create account", input: []string{accountID, accountNumber},  output: &Account{ id: accountID, number: accountNumber }},
 		{name: "create account with illegible numbers", input: []string{accountID, accountNumberIll},  output: &Account{ id: accountID, number: accountNumberIll }},
-
 	}
 
 	for _, tt := range tests {
@@ -54,21 +53,18 @@ func TestValidateAccountNumber(t *testing.T) {
 	accountID := uuid.NewString()
 	tests := []struct{
 		name string
-		input []string
+		input Account
 		output string
 	}{
-		{name: "valid number", input: []string{accountID, "000000051"},  output: "OK"},
-		{name: "invalid number", input: []string{accountID, "000000001"},  output: "ERR"},
-		{name: "illegible number", input: []string{accountID, "00000000?"},  output: "ILL"},
-
+		{name: "valid number", input: Account{id: accountID, number: "000000051"},  output: "OK"},
+		{name: "invalid number", input: Account{id: accountID, number: "000000001"},  output: "ERR"},
+		{name: "illegible number", input: Account{id: accountID, number: "00000000?"},  output: "ILL"},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := NewAccount(tt.input[0], tt.input[1])
-			got.Validate()
-			assert.Nil(t, err, tt.name)
-			assert.Equal(t, tt.output, got.CheckSum(), tt.name)
+			tt.input.Validate()
+			assert.Equal(t, tt.output, tt.input.CheckSum(), tt.name)
 		})
 	}
 }

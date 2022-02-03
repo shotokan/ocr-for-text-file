@@ -19,6 +19,13 @@ func checkSum(accountNumbers string) string{
 	log.Println(accountNumbers)
 	checkSum := 0
 	delta := 9
+
+	if len(accountNumbers) != 9 {
+		errorMsg := "it is not possible to convert " + accountNumbers
+		log.Println(errorMsg)
+		return ILLEGIBLE_ACCOUNT
+	}
+	
 	for i := 0; i < 9; i++ {
 		accountNumber, err := strconv.Atoi(string(accountNumbers[i]))
 		if err != nil {
